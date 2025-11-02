@@ -13,7 +13,7 @@ const int BUZZERPIN = 12;
 const int RESET_BTN_PIN = A5;
 const int LEDPIN = 13;
 const int BUZZER_BTN_PINS[] = {A3, A0};
-const int SHOW_POINTS_BTN_PIN = A2;
+const int SHOW_POINTS_BTN_PIN = 3;
 const int INCREMENT_BTN_PIN = A1;
 
 const int rs = 2, en = 4, d4 = 5, d5 = 8, d6 = 10, d7 = 7;
@@ -28,7 +28,6 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 // ------------------- Global Variables -------------------
 
 int GAME_POINTS[NUM_BUZZER_BTNS] = {0};
-int lastPressedButtonIdx = -1;
 
 const Color buttonColors[NUM_BUZZER_BTNS] = {
   {0, 0, 255, "Blue"},     // Blue
@@ -91,6 +90,12 @@ void setup() {
   }
 
   lcd.begin(16, 2);
+  lcd.setCursor(0, 0);
+  lcd.print("Welcome!");
+
+
+  lcd.setCursor(0, 1);
+  lcd.print("Buzzer Game.");
 
   pixels.begin();
   clearNeoPixel();
@@ -162,7 +167,7 @@ void startupLights() {
     pixels.clear();
     pixels.setPixelColor(i, colors[i]);
     pixels.show();
-    delay(100);
+    delay(250);
   }
 }
 
@@ -180,37 +185,53 @@ void loop() {
   }
 
 
-  // --- Handle Reset Button ---
-  if (digitalRead(RESET_BTN_PIN) == LOW) {
-    clearDisplay();
-    startupLights();
-const int melody[] = {
-  NOTE_C4, NOTE_E4, NOTE_G4, NOTE_C5,  // arpeggio up
-  NOTE_C5, NOTE_G4, NOTE_E4, NOTE_C4,  // arpeggio down
-  NOTE_D4, NOTE_F4, NOTE_A4, NOTE_D5,  // second theme
-  NOTE_D5, NOTE_A4, NOTE_F4, NOTE_D4   // repeat down
-};    
-
-const int durations[] = {
-  4, 4, 4, 2,   // first arpeggio
-  4, 4, 4, 2,   // descending
-  4, 4, 4, 2,   // second theme up
-  4, 4, 4, 2    // second theme down
-};
-
-const int size = sizeof(melody) / sizeof(melody[0]);
-
-    playTune(melody, durations, 4);
-    clearNeoPixel();
-
+  // --- Handle Increment Button (only affects last pressed button) ---
+  if (digitalRead(INCREMENT_BTN_PIN) == LOW) {
     for (int i = 0; i < NUM_BUZZER_BTNS; i++) {
-      GAME_POINTS[i] = 0;  // Reset points
+      if (digitalRead(BUZZER_BTN_PINS[i]) == LOW) {
+        GAME_POINTS[i]++;
+
+        const int melody[] = {NOTE_C4, NOTE_G3};
+        const int durations[] = {4, 4};
+        const int size = 2;
+        playTune(melody, durations, size);      
+      }
+
+      // Break out of full loop to start a new process
+      return;
     }
 
-    lastPressedButtonIdx = -1;
-    delay(200);
-    return;
-  }
+
+  // --- Handle Reset Button ---
+  if (digitalRead(RESET_BTN_PIN) == LOW) {
+      clearDisplay();
+      startupLights();
+      const int melody[] = {
+        NOTE_C4, NOTE_E4, NOTE_G4, NOTE_C5,  // arpeggio up
+        NOTE_C5, NOTE_G4, NOTE_E4, NOTE_C4,  // arpeggio down
+        NOTE_D4, NOTE_F4, NOTE_A4, NOTE_D5,  // second theme
+        NOTE_D5, NOTE_A4, NOTE_F4, NOTE_D4   // repeat down
+      };    
+
+      const int durations[] = {
+        4, 4, 4, 2,   // first arpeggio
+        4, 4, 4, 2,   // descending
+        4, 4, 4, 2,   // second theme up
+        4, 4, 4, 2    // second theme down
+      };
+
+      const int size = sizeof(melody) / sizeof(melody[0]);
+
+      playTune(melody, durations, 4);
+      clearNeoPixel();
+
+      for (int i = 0; i < NUM_BUZZER_BTNS; i++) {
+        GAME_POINTS[i] = 0;  // Reset points
+      }
+
+      delay(200);
+      return;
+    }
 
   // --- Handle Buzzer Buttons ---
   for (int i = 0; i < NUM_BUZZER_BTNS; i++) {
@@ -220,24 +241,6 @@ const int size = sizeof(melody) / sizeof(melody[0]);
     if (currState == LOW) {
       allLights(buttonColors[i].r, buttonColors[i].g, buttonColors[i].b);
       playBuzzTune();
-      lastPressedButtonIdx = i; // Save last pressed button
     }
   }
-
-  // --- Handle Increment Button (only affects last pressed button) ---
-  if (digitalRead(INCREMENT_BTN_PIN) == LOW) {
-    if (lastPressedButtonIdx == -1) {
-      const int melody[] = {NOTE_B3, NOTE_A3};
-      const int durations[] = {8, 4};
-      const int size = 2;
-      playTune(melody, durations, size);
-    }
-
-    GAME_POINTS[lastPressedButtonIdx]++;
-
-    const int melody[] = {NOTE_C4, NOTE_G3};
-    const int durations[] = {4, 4};
-    const int size = 2;
-    playTune(melody, durations, size);
-  }
-}
+}}
