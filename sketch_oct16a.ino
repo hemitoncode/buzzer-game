@@ -5,16 +5,16 @@ struct Color {
   uint8_t r;
   uint8_t g;
   uint8_t b;
-  const String name; // Human-readable name
+  const String name;
 };
 
 // ------------------- Pin Definitions -------------------
 const int BUZZERPIN = 12;
-const int RESET_BTN_PIN = A5;
+const int RESET_BTN_PIN = A1;
 const int LEDPIN = 13;
 const int BUZZER_BTN_PINS[] = {A3, A0};
 const int SHOW_POINTS_BTN_PIN = 3;
-const int INCREMENT_BTN_PIN = A1;
+const int INCREMENT_BTN_PIN = A5;
 
 const int rs = 2, en = 4, d4 = 5, d5 = 8, d6 = 10, d7 = 7;
 const int NUM_BUZZER_BTNS = sizeof(BUZZER_BTN_PINS) / sizeof(BUZZER_BTN_PINS[0]);
@@ -33,8 +33,12 @@ const Color buttonColors[NUM_BUZZER_BTNS] = {
 };
 
 // ------------------- Notes -------------------
-#define NOTE_C4 262
 #define NOTE_G3 196
+#define NOTE_C4 262
+#define NOTE_E4 330
+#define NOTE_G4 392
+#define NOTE_B4 494
+#define NOTE_C5 523
 
 // ------------------- Setup -------------------
 void setup() {
@@ -159,10 +163,10 @@ void loop() {
         const int durations[] = {4, 4};
         playTune(melody, durations, 2);
         showGamePoint(GAME_POINTS[i], buttonColors[i].name);
-        delay(300);
-        return;
       }
     }
+
+    return;
   }
 
   // --- Reset Button ---
@@ -178,7 +182,18 @@ void loop() {
     clearNeoPixel();
     lcd.clear();
     lcd.print("Scores reset!");
-    delay(500);
+
+    const int melody[] = {
+      NOTE_C4, NOTE_E4, NOTE_G4, NOTE_C5, 
+      NOTE_G4, NOTE_E4, NOTE_C4, NOTE_G3
+    };
+
+    const int durations[] = {
+      4, 4, 4, 4,
+      4, 4, 4, 2
+    };
+
+    playTune(melody, durations, 2);
     return;
   }
 
