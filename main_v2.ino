@@ -28,5 +28,5 @@ void loop() {
     ring.show();
   }
 
-  delay(20); // Small debounce
+  delay(10000); // Delaying by a long time to ensure another interaction does not occur
 }
