@@ -1,6 +1,6 @@
 #include <Adafruit_NeoPixel.h>
 
-#define PIN 6          // Data pin connected to the NeoPixel ring
+#define PIN 3          // Data pin connected to the NeoPixel ring
 #define NUM_LEDS 16    // NeoPixel ring has 16 LEDs
 
 Adafruit_NeoPixel ring(NUM_LEDS, PIN, NEO_GRB + NEO_KHZ800);
