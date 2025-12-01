@@ -37,7 +37,7 @@ void showColor(int red, int green, int blue) {
   
   ring1.show();
   ring2.show();
-  delay(1000);
+  delay(5000);
   
   for (int i = 0; i < NUM_LEDS; i++) {
     ring1.setPixelColor(i, ring1.Color(0, 0, 0));
