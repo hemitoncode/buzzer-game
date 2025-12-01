@@ -29,6 +29,15 @@ void loop() {
   } 
 }
 
+void removeColor():
+  for (int i = 0; i < NUM_LEDS; i++) {
+    ring1.setPixelColor(i, ring1.Color(0, 0, 0));
+    ring2.setPixelColor(i, ring2.Color(0, 0, 0));  
+  }
+  
+  ring1.show();
+  ring2.show();
+
 void showColor(int red, int green, int blue) {
   for (int i = 0; i < NUM_LEDS; i++) {
     ring1.setPixelColor(i, ring1.Color(red, green, blue));
@@ -38,12 +47,6 @@ void showColor(int red, int green, int blue) {
   ring1.show();
   ring2.show();
   delay(5000);
-  
-  for (int i = 0; i < NUM_LEDS; i++) {
-    ring1.setPixelColor(i, ring1.Color(0, 0, 0));
-    ring2.setPixelColor(i, ring2.Color(0, 0, 0));  
-  }
-  
-  ring1.show();
-  ring2.show();
+
+  removeColor();
 }
